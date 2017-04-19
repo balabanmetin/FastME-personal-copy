@@ -300,8 +300,8 @@ void Message (char *message, ...);
 void Debug (char *message, ...);
 void *mCalloc (int nb, size_t size);
 boolean isNumeric (const char *p);
-char *getLine (FILE *file, char* line, const int len);
-char *str_replace (const char *s, char ch, const char *repl);
+char *getLine (FILE *file, const int len);
+char *str_replace (char *s, char ch, const char *repl);
 int countFields (char *str, const char c);
 char **str_split (char* str, const char delim);
 

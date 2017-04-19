@@ -350,9 +350,9 @@ boolean isNumeric (const char *p)
 
 /*********************************************************/
 
-char *getLine (FILE *file, char *line, const int len)
+char *getLine (FILE *file, const int len)
 {
-	line = (char*) mCalloc (len, sizeof(char));
+	char *line = (char*) mCalloc (len, sizeof(char));
     
     memset (line, '\0', (size_t) len);
     
@@ -366,7 +366,7 @@ char *getLine (FILE *file, char *line, const int len)
 
 /*********************************************************/
 
-char *str_replace (const char *s, char ch, const char *repl)
+char *str_replace (char *s, char ch, const char *repl)
 {
 	int count = 0;
 	const char *t;
@@ -374,8 +374,8 @@ char *str_replace (const char *s, char ch, const char *repl)
 		count += (*t == ch);
 
 	size_t rlen = strlen(repl);
-	char *res = (char*) mCalloc ( (int) strlen(s) + ( ( (int)rlen - 1) * count) + 1, sizeof(char));
-	char *ptr = res;
+	char *r = (char*) mCalloc ( (int) strlen(s) + ( ( (int)rlen - 1) * count) + 1, sizeof(char));
+	char *ptr = r;
 	for(t=s; *t; t++)
 	{
 		if(*t == ch)
@@ -388,9 +388,11 @@ char *str_replace (const char *s, char ch, const char *repl)
 			*ptr++ = *t;
 		}
 	}
-	*ptr = 0;
+	ptr = s;
+	s = r;
+	free (ptr);
 	
-	return res;
+	return s;
 }
 
 /*********************************************************/

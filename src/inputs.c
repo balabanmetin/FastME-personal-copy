@@ -194,7 +194,13 @@ double **loadM (FILE *ifile, int *size, set *S)
 	{
 		// Read line, remove trailing EOL, replace tabulation by blank space
 		// line length = MAX_NAME_LENGTH + 16 blank spaces + ( N taxa * ([DECIMAL_DIG] digits + 2 blank spaces) )
-		if (NULL != (line = str_replace ( str_replace ( str_replace ( getLine (ifile, line, (MAX_NAME_LENGTH + 16 + (zsize * (DECIMAL_DIG+2)))), '\n', " " ), '\r', " " ), '\t', " " )))
+		line = getLine (ifile, (MAX_NAME_LENGTH + 16 + (zsize * (DECIMAL_DIG+2))));
+		// Remove trailing EOL & replace tabulation by blank space
+		line = str_replace ( line, '\n', "" );
+		line = str_replace ( line, '\r', "" );
+		line = str_replace ( line, '\t', " " );
+		if (NULL != line)
+		//if (NULL != (line = str_replace ( str_replace ( str_replace ( getLine (ifile, line, (MAX_NAME_LENGTH + 16 + (zsize * (DECIMAL_DIG+2)))), '\n', " " ), '\r', " " ), '\t', " " )))
 		{
 			// Split line on blank spaces
 			tokens = str_split (line, ' ');
