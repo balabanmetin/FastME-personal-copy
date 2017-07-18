@@ -344,7 +344,6 @@ void NewickPrintSubtree(tree *T, edge *e, FILE *ofile, const char *format)
 		fprintf(ofile,")");
 	}
 	fprintf(ofile,"%s",e->head->label);
-	//fprintf(ofile,":%f",e->distance);
 	fprintf(ofile,format,e->distance);
 	
 	return;
@@ -371,7 +370,6 @@ void NewickPrintBinaryTree(tree *T, FILE *ofile, const char *format)
 		NewickPrintSubtree(T,f,ofile,format);
 		fprintf(ofile,",");
 	}
-	//fprintf(ofile,"%s:%f",T->root->label,e->distance);
 	fprintf(ofile,"%s",T->root->label);
 	fprintf(ofile,format,e->distance);
 	fprintf(ofile,")");
@@ -419,13 +417,13 @@ void NewickPrintTree(tree *T, FILE *ofile, int precision)
 {
 	char format[8];
 	snprintf (format, 8, ":%%.%df", precision);
-	
-  if (leaf(T->root))
-    NewickPrintBinaryTree(T,ofile,format);
-  else
-    NewickPrintTrinaryTree(T,ofile,format);
+		
+	if (leaf(T->root))
+		NewickPrintBinaryTree(T,ofile,format);
+	else
+		NewickPrintTrinaryTree(T,ofile,format);
     
-  return;
+    return;
 }
 
 /*********************************************************/
@@ -450,13 +448,9 @@ void NewickPrintSubtreeStr(tree *T, edge *e, char *str, const char *format)
 	if (strlen (str) < MAX_INPUT_SIZE - strlen (e->head->label) -1)
 		strncat (str, e->head->label, strlen (e->head->label));
 
-	//if (strlen (str) < MAX_INPUT_SIZE - 2)
-	//	strncat (str, ":", 1);
-
 	tmp = (char *) mCalloc (INPUT_SIZE, sizeof(char));
 	if (strlen(tmp))
 		strncpy(tmp, "", strlen(tmp));
-	//snprintf (tmp, INPUT_SIZE, "%f", e->distance);
 	snprintf (tmp, INPUT_SIZE, format, e->distance);
 	if (strlen (str) < MAX_INPUT_SIZE - strlen (tmp) -1)
 		strncat (str, tmp, strlen (tmp));
@@ -494,13 +488,9 @@ void NewickPrintBinaryTreeStr(tree *T, char *str, const char *format)
 	if (strlen (str) < MAX_INPUT_SIZE - strlen (T->root->label) -1)
 		strncat (str, T->root->label, strlen (T->root->label));
 
-	//if (strlen (str) < MAX_INPUT_SIZE - 2)
-	//	strncat (str, ":", 1);
-
 	tmp = (char *) mCalloc (INPUT_SIZE, sizeof(char));
 	if (strlen(tmp))
 		strncpy(tmp, "", strlen(tmp));
-	//snprintf (tmp, INPUT_SIZE, "%f", e->distance);
 	snprintf (tmp, INPUT_SIZE, format, e->distance);
 	if (strlen (str) < MAX_INPUT_SIZE - strlen (tmp) -1)
 		strncat (str, tmp, strlen (tmp));

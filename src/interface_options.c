@@ -569,7 +569,7 @@ void Get_Input_CommandLine (Options *input, int argc, char **argv)
 				// number of digits after dot for output precision
 				input->precision = atoi (optarg);
 				if (input->precision < 1 || input->precision > DECIMAL_DIG -3)
-					Exit ( (char*)"-f option: '%d' invalid value for number of digits.", input->precision);
+					Exit ( (char*)"-f option: '%d' invalid value for number of digits [1 - %d].", input->precision, DECIMAL_DIG -3);
 
 				break;
 

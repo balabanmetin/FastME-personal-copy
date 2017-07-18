@@ -28,7 +28,8 @@
 void bNNIRetestEdge (int *p, int *q, edge *e,tree *T, double **avgDistArray,
 	double *weights, int *location, int *possibleSwaps);
 void bNNItopSwitch (edge *e, int direction, double **A);
-void bNNI (tree *T, double **avgDistArray, int *count, FILE *statfile);
+void bNNI (tree *T, double **avgDistArray, int *count, FILE *statfile,
+	int precision);
 void updateSubTreeAfterNNI (double **A, node *v, edge *rootEdge, node *closer,
 	node *further, double dcoeff, int direction);
 void bNNIupdateAverages (double **A, node *v, edge *par, edge *skew,

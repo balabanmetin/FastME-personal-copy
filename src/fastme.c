@@ -1284,7 +1284,7 @@ tree *ImproveTree (Options *options, tree *T0, double **D, double **A,
 				if (options->method != TaxAddBAL)
 					makeBMEAveragesTable (T1, D, A);
 
-				bNNI (T1, A, nniCount, options->fpO_stat_file);
+				bNNI (T1, A, nniCount, options->fpO_stat_file, options->precision);
 				assignBMEWeights (T1, A);
 				break;
 
@@ -1293,7 +1293,7 @@ tree *ImproveTree (Options *options, tree *T0, double **D, double **A,
 					assignAllSizeFields (T1);
 
 				makeOLSAveragesTable (T1, D, A);
-				NNI (T1, A, nniCount, options->fpO_stat_file);
+				NNI (T1, A, nniCount, options->fpO_stat_file, options->precision);
 				assignOLSWeights (T1, A);
 				break;
 
@@ -1318,7 +1318,7 @@ tree *ImproveTree (Options *options, tree *T0, double **D, double **A,
 		T2 = copyTree (T0);
 		
 		makeBMEAveragesTable (T2, D, A);
-		SPR (T2, D, A, sprCount, options->fpO_stat_file);
+		SPR (T2, D, A, sprCount, options->fpO_stat_file, options->precision);
 		assignBMEWeights (T2, A);
 		
 		if (!isBoostrap)

@@ -97,7 +97,8 @@ void bNNItopSwitch (edge *e, int direction, double **A)
 
 /*********************************************************/
 
-void bNNI (tree *T, double **avgDistArray, int *count, FILE *statfile)
+void bNNI (tree *T, double **avgDistArray, int *count, FILE *statfile,
+	int precision)
 {
 	edge *e;
 	edge **edgeArray;
@@ -106,6 +107,9 @@ void bNNI (tree *T, double **avgDistArray, int *count, FILE *statfile)
 	int possibleSwaps;
 	double *weights;
 
+	char format[8];
+	snprintf (format, 8, "%%.%df", precision);
+	
 	p = initPerm (T->size+1);
 	q = initPerm (T->size+1);
 	edgeArray = (edge **) mCalloc ((T->size+1), sizeof (edge *));
@@ -121,7 +125,8 @@ void bNNI (tree *T, double **avgDistArray, int *count, FILE *statfile)
 	weighTree (T);
 	if (!isBoostrap)
 	{
-		fprintf (statfile, "\tBefore NNI:     tree length is %f.\n", T->weight);
+		fprintf (statfile, "\tBefore NNI:     tree length is ");
+		fprintf (statfile, format, T->weight);
 		if (verbose > 2)
 			Debug ( (char*)"Before NNI: tree length is %f.", T->weight);
 		else if (verbose > 1)
@@ -144,14 +149,15 @@ void bNNI (tree *T, double **avgDistArray, int *count, FILE *statfile)
 	 * with the minimum value pointed to by p[1]
 	 * p[i] is index (in edgeArray) of edge with i-th position in the
 	 * heap, q[j] is the position of edge j in the heap */
-
+	
 	while (weights[p[1]] < -DBL_EPSILON)
 	{
 		(*count)++;
 		T->weight = T->weight + weights[p[1]];
 		if (!isBoostrap)
 		{
-			fprintf (statfile, "\tNNI  %5d: new tree length is %f.\n", *count, T->weight);
+			fprintf (statfile, "\n\tNNI  %5d: new tree length is ", *count);
+			fprintf (statfile, format, T->weight);
 			if (verbose > 2)
 				Debug ( (char*)"NNI %5d: new tree length is %f.", *count, T->weight);
 			else if (verbose > 1)
@@ -173,6 +179,7 @@ void bNNI (tree *T, double **avgDistArray, int *count, FILE *statfile)
 			e = depthFirstTraverse (T, e);
 		}
 	}
+	fprintf (statfile, "\n");
 
 	free (p);
 	free (q);

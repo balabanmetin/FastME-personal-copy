@@ -299,7 +299,8 @@ void NNIRetestEdge (int *p, int *q, edge *e,tree *T, double **avgDistArray,
 
 /*********************************************************/
 
-void NNI (tree *T, double **avgDistArray, int *count, FILE *statfile)
+void NNI (tree *T, double **avgDistArray, int *count, FILE *statfile,
+	int precision)
 {
 	edge *e, *centerEdge;
 	edge **edgeArray;
@@ -308,7 +309,10 @@ void NNI (tree *T, double **avgDistArray, int *count, FILE *statfile)
 	int i;
 	int possibleSwaps;
 	double *weights;
-
+	
+	char format[8];
+	snprintf (format, 8, "%%.%df", precision);
+	
 	p = initPerm (T->size+1);
 	q = initPerm (T->size+1);
 	edgeArray = (edge **) mCalloc ((T->size+1), sizeof (edge *));
@@ -326,7 +330,8 @@ void NNI (tree *T, double **avgDistArray, int *count, FILE *statfile)
 
 	if (!isBoostrap)
 	{
-		fprintf (statfile, "\tBefore NNI:     tree length is %f.\n", T->weight);
+		fprintf (statfile, "\tBefore NNI:     tree length is ");
+		fprintf (statfile, format, T->weight);
 		if (verbose > 2)
 			Debug ( (char*)"Before NNI: tree length is %f.", T->weight);
 		else if (verbose > 1)
@@ -358,7 +363,8 @@ void NNI (tree *T, double **avgDistArray, int *count, FILE *statfile)
 		T->weight = T->weight + weights[p[1]];
 		if (!isBoostrap)
 		{
-			fprintf (statfile, "\tNNI  %5d: new tree length is %f.\n", *count, T->weight);
+			fprintf (statfile, "\n\tNNI  %5d: new tree length is ", *count);
+			fprintf (statfile, format, T->weight);
 			if (verbose > 2)
 				Debug ( (char*)"NNI %5d: new tree length is %f.", *count, T->weight);
 			else if (verbose > 1)
@@ -381,6 +387,7 @@ void NNI (tree *T, double **avgDistArray, int *count, FILE *statfile)
 		e = centerEdge->tail->parentEdge;
 		NNIRetestEdge (p, q, e, T, avgDistArray, weights, location, &possibleSwaps);
 	}
+	fprintf (statfile, "\n");
 
 	free (p);
 	free (q);

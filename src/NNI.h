@@ -34,7 +34,8 @@ void NNIupdateAverages (double **A, edge *e, edge *par, edge *skew,
 void NNItopSwitch (tree *T, edge *e, int direction, double **A);
 void NNIRetestEdge (int *p, int *q, edge *e,tree *T, double **avgDistArray,
 	double *weights, int *location, int *possibleSwaps);
-void NNI (tree *T, double **avgDistArray, int *count, FILE *statfile);
+void NNI (tree *T, double **avgDistArray, int *count, FILE *statfile,
+	int precision);
 
 
 #endif /*NNI_H_*/

@@ -59,7 +59,8 @@ void findTableMin (int *imin, int *jmin, int *kmin, int n, double ***X, double *
 
 /*********************************************************/
 
-void SPR (tree *T, double **D, double **A, int *count, FILE *statfile)
+void SPR (tree *T, double **D, double **A, int *count, FILE *statfile,
+	int precision)
 {
 	int i, j, k;
 	node *v;
@@ -69,6 +70,9 @@ void SPR (tree *T, double **D, double **A, int *count, FILE *statfile)
 	double swapValue = 0.0;
 	boolean firstSPR = TRUE;
 
+	char format[8];
+	snprintf (format, 8, "%%.%df", precision);
+	
 	swapWeights = (double ***) mCalloc (2, sizeof(double **));
 	makeBMEAveragesTable (T, D, A);
 	assignBMEWeights (T, A);
@@ -96,7 +100,8 @@ void SPR (tree *T, double **D, double **A, int *count, FILE *statfile)
 				firstSPR = FALSE;
 				if (!isBoostrap)
 				{
-					fprintf (statfile, "\tBefore SPR:     tree length is %f.\n", T->weight);
+					fprintf (statfile, "\tBefore SPR:     tree length is ");
+					fprintf (statfile, format, T->weight);
 					if (verbose > 2)
 						Debug ( (char*)"Before SPR: tree length is %f.", treeWeightBefore);
 					else if (verbose > 1)
@@ -142,7 +147,9 @@ void SPR (tree *T, double **D, double **A, int *count, FILE *statfile)
 			
 			if (!isBoostrap)
 			{
-				fprintf (statfile, "\tSPR  %5d: new tree length is %f.\n", *count, T->weight);
+				fprintf (statfile, "\n\tSPR  %5d: new tree length is ", *count);
+				fprintf (statfile, format, T->weight);
+				//fprintf (statfile, "\tSPR  %5d: new tree length is %f.\n", *count, T->weight);
 				if (verbose > 2)
 					Debug ( (char*)"SPR %5d: new tree length is %f.", *count, T->weight);
 				else if (verbose > 1)
@@ -151,6 +158,7 @@ void SPR (tree *T, double **D, double **A, int *count, FILE *statfile)
 
 		}
 	} while (swapValue < -FLT_EPSILON);
+	fprintf (statfile, "\n");
 
 	for (i=0; i<2; i++)
 		freeMatrix (swapWeights[i], T->size);
