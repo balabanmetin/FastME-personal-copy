@@ -422,26 +422,17 @@ void printFinalData (Options *options, char **bootTrees, char **matStr)
 		fprintf (options->fpO_boot_file, "%s", bootTrees[i]);
 		if (NULL != bootTrees[i])
 			free (bootTrees[i]);
-		
+
 		// print pseudo-matrices to file
 		// free memory allocated for pseudo-matrices strings
-		if (options->use_O_mat_file)
+		if (options->use_O_mat_file && NULL != matStr)
 		{
 			fprintf (options->fpO_mat_file, "%s", matStr[i]);
-//DEBUG
-//			if (NULL != matStr[i])
-//				free (matStr[i]);
+			if (NULL != matStr[i])
+				free (matStr[i]);
 		}
 	}
 
-//DEBUG
-for (i=options->nb_bootstraps; i>0; --i)
-{
-			if (NULL != matStr[i])
-				free (matStr[i]);
-	
-}
-	
 	return;
 }
 
