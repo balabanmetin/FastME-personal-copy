@@ -445,9 +445,6 @@ double calcTN93 (double aR, double aY, double b, double PR, double PY,
 					(2.0 * ( (PR * PY) - (PAPG * PY / PR) - (PCPT * PR / PY) ) * log (loc3) );
 	}
 
-//DEBUG
-//Debug ("fTsR %lf, fTsY %lf, fTr %lf, t1 %lf, t2 %lf, t3 %lf, d %lf", aR, aY, b, loc1, loc2, loc3, returnValue);
-
 	return (returnValue);
 }
 

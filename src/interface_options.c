@@ -364,7 +364,7 @@ void Usage ()
 
 	printf (BOLD"\n\t-f "LINE"number of digits"
 		FLAT"\n\t\tUse this option to set the number of digits after the dot to use on output."
-		FLAT"\n\t\tDefault precision is 12.\n");
+		FLAT"\n\t\tDefault precision is 8.\n");
 
 #ifdef _OPENMP
 	printf (BOLD"\n\t-T "LINE"number of threads"BOLD", --nb_threads="LINE"number of threads"
@@ -421,7 +421,7 @@ void Set_Defaults_Input (Options *input)
 	input->use_gamma		= FALSE;
 	input->gamma			= 1.0;
 	input->only_mat			= FALSE;
-	input->precision		= 12;
+	input->precision		= 8;
 	input->use_NNI			= FALSE;
 	input->NNI				= BALNNI;
 	input->branch			= NONE;
@@ -568,8 +568,8 @@ void Get_Input_CommandLine (Options *input, int argc, char **argv)
 			case 'f':
 				// number of digits after dot for output precision
 				input->precision = atoi (optarg);
-				if (input->precision < 1 || input->precision > DECIMAL_DIG -3)
-					Exit ( (char*)"-f option: '%d' invalid value for number of digits [1 - %d].", input->precision, DECIMAL_DIG -3);
+				if (input->precision < 1 || input->precision > DECIMAL_DIG -4)
+					Exit ( (char*)"-f option: '%d' invalid value for number of digits [1 - %d].", input->precision, DECIMAL_DIG -4);
 
 				break;
 

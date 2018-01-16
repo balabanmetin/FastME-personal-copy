@@ -34,6 +34,7 @@ edge *depthFirstTraverse (tree *T, edge *e);
 edge *moveUpRight (edge *e);
 edge *topFirstTraverse (tree *T, edge *e);
 edge *depthRightFirstTraverse (tree *T, edge *e);
+//edge *findEdgeFromName (edge *e, char *name);
 
 #endif /*TRAVERSE_H_*/
 

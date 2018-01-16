@@ -211,3 +211,22 @@ edge *depthRightFirstTraverse (tree *T, edge *e)
 
 	return (f);
 }
+
+/*********************************************************/
+/*
+edge *findEdgeFromName (edge *e, char *name)
+{
+	edge *f = NULL;
+	
+	if (0 == strncmp (name, e->tail->label, MAX_NAME_LENGTH)
+		f = e;
+	else
+	{
+		f = findEdgeFromName (e->head->leftEdge, name);
+		if (NULL == f)
+			f = findEdgeFromName (e->head->rightEdge, name);
+	}
+	
+	return (f);
+}
+*/

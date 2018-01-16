@@ -239,6 +239,7 @@ int main (int argc, char **argv)
 			Message ( (char*)"Non parametric bootstrap analysis...");
 			printf ("\n  [");
 			isBoostrap = TRUE;
+			
 			NewickPrintTreeStr (T, bestTree, options->precision);
 
 			repCounter = repToPrint = printedRep = 0;
@@ -274,7 +275,6 @@ int main (int argc, char **argv)
 				//nniCount = sprCount = tbrCount = 0;
 				nniCount = sprCount = 0;
 				species = copySet (species_bk);
-
 
 		/***GET MATRIX FROM ALIGNMENT DATA********************/
 				if (MATRIX != options->input_type)
@@ -352,8 +352,9 @@ int main (int argc, char **argv)
 #endif
 
 			isBoostrap = FALSE;
+
 			boot (bestTree, bootTrees, options->nb_bootstraps, options->fpO_tree_file);
-			
+
 			printFinalData (options, bootTrees, matStr);
 			
 			freeIntMat (rnd, options->nb_bootstraps);
@@ -414,7 +415,7 @@ int main (int argc, char **argv)
 void printFinalData (Options *options, char **bootTrees, char **matStr)
 {
 	int i;
-	
+
 	for (i=0; i<options->nb_bootstraps; i++)
 	{
 		// print pseudo-trees to file
@@ -432,7 +433,7 @@ void printFinalData (Options *options, char **bootTrees, char **matStr)
 				free (matStr[i]);
 		}
 	}
-
+	
 	return;
 }
 
@@ -440,13 +441,26 @@ void printFinalData (Options *options, char **bootTrees, char **matStr)
 
 char **InitMatStrings (int numBoot, int numSpc, int precision)
 {
-	int i;
+	int i, len;
+	
+	// Mem alloc requires:
+	// + 8 chars on the first line (indicating the number of taxa)
+	// for each taxa:
+	// + MAX_NAME_LENGTH for taxa name
+	// + the distances
+	//   each distance requires a length of:
+	//     + precision + 1 for '.'
+	//     + 2 for digits before the dot
+	//     + 2 for blank spaces
+	// + 1 for '\n'
+	
+	len = 8 + ( numSpc * (MAX_NAME_LENGTH + ( numSpc * (precision+5) ) + 1));
 	
 	char **matStr = (char **) mCalloc (numBoot, sizeof (char *));
 	
 	for (i=0; i<numBoot; i++)
 	{
-		matStr[i] = (char *) mCalloc ( MAX_NAME_LENGTH + ( (precision+1) * numSpc * (numSpc+1)), sizeof (char));
+		matStr[i] = (char *) mCalloc (len, sizeof (char));
 	}
 	
 	return matStr;
@@ -852,8 +866,7 @@ void printMatrixStr (double **D, int size, set *nodes, char *str, int input_type
 			}
 			else
 			{
-				//snprintf (tmp, INPUT_SIZE, "%7.8f  ", d);
-				snprintf (tmp, INPUT_SIZE, format, d);
+				snprintf (tmp, INPUT_SIZE, (const char *)format, d);
 			}
 			strncat (str, tmp, strlen (tmp));
 		}

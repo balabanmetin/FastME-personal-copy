@@ -320,7 +320,7 @@ void *mCalloc (int nb, size_t size)
 	{
 #endif
 
-	if ((allocated = calloc ((size_t) nb, (size_t) size)) == NULL)
+	if ((allocated = calloc ((size_t) nb, size)) == NULL)
 		Exit ( (char*)"Low memory! nb %d size %d", nb, size);
 
 #ifdef _OPENMP
