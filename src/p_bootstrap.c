@@ -637,10 +637,9 @@ void Read_Branch_Length (char *s_d, char *s_a, arbre *tree)
 	strncpy (sub_tp, s_d, strlen (s_d));
 	strncat (sub_tp, ":", 1);
 	p = strstr (s_a, sub_tp);
-
 	if (p)
 	{
-		b->l = atof ((char *) p + (int) strlen (sub_tp) + 1);
+		b->l = atof ((char *) p + (int) strlen (sub_tp));
 		tree->has_branch_lengths = 1;
 	}
 
@@ -680,12 +679,15 @@ void Connect_One_Edge_To_Two_Nodes (bnode *a, bnode *d, bedge *b)
 	if (a->tax)
 		b->l = a->l[b->r_l];
 
+// VINCE 01-17-2018
+// Negative branch lengths are authorized whith distance methods
+/*
 	if (b->l < BL_MIN)
 		b->l = BL_MIN;
 
 	else if (b->l > BL_MAX)
 		b->l = BL_MAX;
-
+*/
 	b->l_old = b->l;
 
 	return;

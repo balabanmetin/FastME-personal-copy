@@ -230,7 +230,8 @@ int main (int argc, char **argv)
 						nniCount, sprCount, setCounter);
 			}
 		}
-		
+
+
 /*********************************************************
 		BOOTSTRAPS
 **********************************************************/
@@ -239,7 +240,7 @@ int main (int argc, char **argv)
 			Message ( (char*)"Non parametric bootstrap analysis...");
 			printf ("\n  [");
 			isBoostrap = TRUE;
-			
+
 			NewickPrintTreeStr (T, bestTree, options->precision);
 
 			repCounter = repToPrint = printedRep = 0;
@@ -354,7 +355,7 @@ int main (int argc, char **argv)
 			isBoostrap = FALSE;
 
 			boot (bestTree, bootTrees, options->nb_bootstraps, options->fpO_tree_file);
-
+			
 			printFinalData (options, bootTrees, matStr);
 			
 			freeIntMat (rnd, options->nb_bootstraps);
