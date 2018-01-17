@@ -1,4 +1,13 @@
 
+2018-01-17	Version 2.1.5.2
+ * Several bug fixes:
+   When freeing memory allocated for pseudo-matrices
+   When printing bootstraped pseudo-matrices
+   Wrong branch lengths on the output tree when doing bootstraps
+
+2017-07-20	Version 2.1.5.1
+ * Added required files for an automatic build
+
 2016-03-16	Version 2.1.5
  * Added a CLI option (-f) to set the numerical precision outputs
  * Debugged BioNJ, NJ, UNJ for branch length numerical precision
