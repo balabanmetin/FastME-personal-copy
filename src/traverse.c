@@ -213,20 +213,136 @@ edge *depthRightFirstTraverse (tree *T, edge *e)
 }
 
 /*********************************************************/
-/*
-edge *findEdgeFromName (edge *e, char *name)
+
+node *findNodeFromName (tree *T, char *name)
 {
-	edge *f = NULL;
-	
-	if (0 == strncmp (name, e->tail->label, MAX_NAME_LENGTH)
-		f = e;
-	else
+	node *n = NULL;
+
+	// Node label != name
+	if (0 != strncmp (name, T->root->label, MAX_NAME_LENGTH))
 	{
-		f = findEdgeFromName (e->head->leftEdge, name);
-		if (NULL == f)
-			f = findEdgeFromName (e->head->rightEdge, name);
+		n = traverseEdgeNodeName (T->root->leftEdge, name);
+		if (NULL == n)
+		{
+			n = traverseEdgeNodeName (T->root->middleEdge, name);
+		}
+		if (NULL == n)
+		{
+			n = traverseEdgeNodeName (T->root->rightEdge, name);
+		}
 	}
 	
-	return (f);
+	return (n);
 }
-*/
+
+/*********************************************************/
+
+node *traverseEdgeNodeName (edge *E, char *name)
+{
+	node *n = NULL;
+	
+	if (NULL != E)
+	{
+		// Node label == name
+		if (0 == strncmp (name, E->head->label, MAX_NAME_LENGTH))
+		{
+			n = E->head;
+		}
+		else
+		{
+			if (! leaf (E->head))
+			{
+				n = traverseEdgeNodeName (E->head->leftEdge, name);
+				if (NULL == n)
+					n = traverseEdgeNodeName (E->head->middleEdge, name);
+				if (NULL == n)
+					n = traverseEdgeNodeName (E->head->rightEdge, name);
+			}
+		}
+	}
+	
+	return n;
+}
+
+/*********************************************************/
+
+void traverseFromNode (node *n)
+{
+	double d = 0.0;
+	
+	traverseEdgeDist (n->parentEdge, n);
+	
+	return;
+}
+
+/*********************************************************/
+
+void traverseEdgeDist (edge *E, node *n)
+{
+	node *m = NULL;
+	
+	if (NULL != E)
+	{
+		printf ("\nEdge '%s' distance %f\n", E->label, E->distance);
+	//ne pas comparer des pointeurs, faut comparer des labels
+		if (E->tail == n)
+			m = E->head;
+		else
+			m = E->tail;
+
+		printf ("\nnode '%s'\n", m->label);
+
+		if (leaf (n))
+		{
+			printf ("\nLeaf '%s'\n", m->label);
+		}
+		else
+		{
+			traverseEdgeDist (n->parentEdge, m);
+			traverseEdgeDist (n->middleEdge, m);
+			traverseEdgeDist (n->rightEdge, m);
+		}
+	}
+	
+	return;
+}
+
+/*********************************************************/
+
+void traverseTree (tree *T)
+{
+	printf ("\nsize %d weight %f\n", T->size, T->weight);
+	printf ("\nRoot '%s'\n", T->root->label);
+	
+	traverseEdge (T->root->leftEdge);
+	traverseEdge (T->root->middleEdge);
+	traverseEdge (T->root->rightEdge);
+	
+	return;
+}
+
+/*********************************************************/
+
+void traverseEdge (edge *E)
+{
+	if (NULL != E)
+	{
+		printf ("\nEdge '%s'\nbottomsize %d topsize %d, distance %f, totalweight %f\n", E->label, E->bottomsize, E->topsize, E->distance, E->totalweight);
+	
+		node *n = E->head;
+	
+		if (leaf (n))
+		{
+			printf ("\nLeaf '%s'\n", n->label);
+		}
+		else
+		{
+			traverseEdge (n->leftEdge);
+			traverseEdge (n->middleEdge);
+			traverseEdge (n->rightEdge);
+		}
+	}
+	
+	return;
+}
+

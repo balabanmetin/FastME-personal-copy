@@ -34,7 +34,14 @@ edge *depthFirstTraverse (tree *T, edge *e);
 edge *moveUpRight (edge *e);
 edge *topFirstTraverse (tree *T, edge *e);
 edge *depthRightFirstTraverse (tree *T, edge *e);
-//edge *findEdgeFromName (edge *e, char *name);
+
+node *findNodeFromName (tree *T, char *name);
+node *traverseEdgeNodeName (edge *E, char *name);
+void traverseFromNode (node *n);
+void traverseEdgeDist (edge *E, node *n);
+
+void traverseTree (tree *T);
+void traverseEdge (edge *E);
 
 #endif /*TRAVERSE_H_*/
 

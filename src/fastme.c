@@ -221,7 +221,12 @@ int main (int argc, char **argv)
 			{
 				T = ComputeTree (options, D, A, species, numSpecies, options->precision);
 			}
-		
+//METRICS
+//traverseTree (T);
+node *Nn = findNodeFromName (T, "B");
+printf ("\nNode found '%s'\n", Nn->label);
+traverseFromNode (Nn);
+
 			T = ImproveTree (options, T, D, A, &nniCount, &sprCount, options->fpO_stat_file);
 		
 			if (verbose > 0)
