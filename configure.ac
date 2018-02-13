@@ -2,7 +2,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.69])
-AC_INIT([FastME],[2.1.5.2],[lefort@lirmm.fr])
+AC_INIT([FastME],[2.1.6],[lefort@lirmm.fr])
 AC_CONFIG_SRCDIR([src/interface_utilities.h])
 AC_CONFIG_HEADERS([src/config.h])
 

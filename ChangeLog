@@ -1,4 +1,7 @@
 
+2018-01-17	Version 2.1.6
+ * Added explained variance metric
+
 2018-01-17	Version 2.1.5.2
  * Several bug fixes:
    When freeing memory allocated for pseudo-matrices
