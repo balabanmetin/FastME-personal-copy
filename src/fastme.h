@@ -82,6 +82,8 @@ tree *ComputeTree (Options *options, double **D, double **A, set *species,
 tree *ImproveTree (Options *options, tree *T0, double **D, double **A,
 	int *nniCount, int *sprCount, FILE *ofile);
 
+void explainedVariance (double **D, tree *T, int n, int precision,
+	int input_type, FILE *fpO);
 
 #endif /*FASTME_H_*/
 

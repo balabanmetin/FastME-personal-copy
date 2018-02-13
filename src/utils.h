@@ -286,6 +286,14 @@ extern int verbose;
 #define FLU 43
 #endif
 
+// Explained variance thresholds
+#ifndef EXPL_VAR_NT
+#define EXPL_VAR_NT 0.98
+#endif
+#ifndef EXPL_VAR_AA
+#define EXPL_VAR_AA 0.95
+#endif
+
 
 void constantToStr (int c, char *str);
 int *initZeroArray (int l);

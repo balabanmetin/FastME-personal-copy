@@ -160,6 +160,7 @@ void computeLOGDET (char **data, int numSeqs, int numSites,
 
 void symmetrizeDoubleMatrix (double **X, int n);
 
+double meanDist (double **X, int n);
 
 #endif /*DISTANCE_H_*/
 

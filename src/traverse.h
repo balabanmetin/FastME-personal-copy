@@ -35,13 +35,11 @@ edge *moveUpRight (edge *e);
 edge *topFirstTraverse (tree *T, edge *e);
 edge *depthRightFirstTraverse (tree *T, edge *e);
 
-node *findNodeFromName (tree *T, char *name);
-node *traverseEdgeNodeName (edge *E, char *name);
-void traverseFromNode (node *n);
-void traverseEdgeDist (edge *E, node *n);
-
-void traverseTree (tree *T);
-void traverseEdge (edge *E);
+void traverseFromNode (node *n, double **M, boolean allowNegDist);
+double traverseEdgeDist (edge *E, node *n, double d, double **M,
+	int seqIdx, boolean allowNegDist);
+double **patristicMatrix (tree *T, int n, boolean allowNegDist);
+void traverseEdge (edge *E, double **M, boolean allowNegDist);
 
 #endif /*TRAVERSE_H_*/
 

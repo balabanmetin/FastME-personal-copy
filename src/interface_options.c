@@ -364,7 +364,7 @@ void Usage ()
 
 	printf (BOLD"\n\t-f "LINE"number of digits"
 		FLAT"\n\t\tUse this option to set the number of digits after the dot to use on output."
-		FLAT"\n\t\tDefault precision is 8.\n");
+		FLAT"\n\t\tDefault "LINE"number of digits"FLAT" is 8.\n");
 
 #ifdef _OPENMP
 	printf (BOLD"\n\t-T "LINE"number of threads"BOLD", --nb_threads="LINE"number of threads"
