@@ -213,20 +213,113 @@ edge *depthRightFirstTraverse (tree *T, edge *e)
 }
 
 /*********************************************************/
-/*
-edge *findEdgeFromName (edge *e, char *name)
+
+void traverseFromNode (node *n, double **M, boolean allowNegDist)
 {
-	edge *f = NULL;
-	
-	if (0 == strncmp (name, e->tail->label, MAX_NAME_LENGTH)
-		f = e;
+	double d = 0.0;
+
+	if (NULL != n->parentEdge)
+		d = traverseEdgeDist (n->parentEdge, n, d, M, n->index2, allowNegDist);
 	else
 	{
-		f = findEdgeFromName (e->head->leftEdge, name);
-		if (NULL == f)
-			f = findEdgeFromName (e->head->rightEdge, name);
+		if (NULL != n->leftEdge)
+			d = traverseEdgeDist (n->leftEdge, n, d, M, n->index2, allowNegDist);
+		else
+		{
+			if (NULL != n->middleEdge)
+				d = traverseEdgeDist (n->middleEdge, n, d, M, n->index2, allowNegDist);
+			else
+			{
+				if (NULL != n->rightEdge)
+					d = traverseEdgeDist (n->rightEdge, n, d, M, n->index2, allowNegDist);
+				//else
+					//TODO: raise error
+			}
+		}
 	}
 	
-	return (f);
+	return;
 }
-*/
+
+/*********************************************************/
+
+double traverseEdgeDist (edge *E, node *n, double d, double **M,
+	int seqIdx, boolean allowNegDist)
+{	
+	node *m = NULL;
+	
+	if (NULL != E)
+	{
+		// Negative distance values may not be taken into account
+		if (allowNegDist)
+			d += E->distance;
+		else
+			if (E->distance > 0.0)
+				d += E->distance;
+		// Do not go back to the Node we come from
+		if (E->tail == n)
+			m = E->head;
+		else
+			m = E->tail;
+
+		if (leaf (m))
+		{
+			M [seqIdx][m->index2] = d;
+		}
+		else
+		{
+			// Do not traverse the Edge we just came through
+			if (E != m->parentEdge)
+				traverseEdgeDist (m->parentEdge, m, d, M, seqIdx, allowNegDist);
+			if (E != m->leftEdge)
+				traverseEdgeDist (m->leftEdge, m, d, M, seqIdx, allowNegDist);
+			if (E != m->middleEdge)
+				traverseEdgeDist (m->middleEdge, m, d, M, seqIdx, allowNegDist);
+			if (E != m->rightEdge)
+				traverseEdgeDist (m->rightEdge, m, d, M, seqIdx, allowNegDist);
+		}
+	}
+	
+	return d;
+}
+
+/*********************************************************/
+
+double **patristicMatrix (tree *T, int n, boolean allowNegDist)
+{	
+	double **M = initDoubleMatrix (n);
+	
+	// Traverse the tree from root to all nodes
+	traverseFromNode (T->root, M, allowNegDist);
+	
+	// Traverse the tree to find other nodes
+	traverseEdge (T->root->leftEdge, M, allowNegDist);
+	traverseEdge (T->root->middleEdge, M, allowNegDist);
+	traverseEdge (T->root->rightEdge, M, allowNegDist);
+	
+	return M;
+}
+
+/*********************************************************/
+
+void traverseEdge (edge *E, double **M, boolean allowNegDist)
+{
+	if (NULL != E)
+	{
+		node *n = E->head;
+	
+		if (leaf (n))
+		{
+			traverseFromNode (n, M, allowNegDist);
+		}
+		else
+		{
+			traverseEdge (n->leftEdge, M, allowNegDist);
+			traverseEdge (n->middleEdge, M, allowNegDist);
+			traverseEdge (n->rightEdge, M, allowNegDist);
+		}
+	}
+	
+	return;
+}
+

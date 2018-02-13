@@ -1755,3 +1755,21 @@ void symmetrizeDoubleMatrix (double **X, int n)
 	return;
 }
 
+/*********************************************************/
+
+// Compute the mean distance from an input distances matrix X of n sequences
+double meanDist (double **X, int n)
+{
+	int i, j;
+	double d, m;
+	
+	d = 0.0;
+
+	for (i=0; i<n-1; i++)
+		for (j=i+1; j<n; j++)
+			d += X[i][j];
+	
+	m = d / ( n * (n-1) / 2);
+	
+	return m;
+}

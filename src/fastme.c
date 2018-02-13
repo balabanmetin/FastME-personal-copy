@@ -221,15 +221,18 @@ int main (int argc, char **argv)
 			{
 				T = ComputeTree (options, D, A, species, numSpecies, options->precision);
 			}
-		
+
 			T = ImproveTree (options, T, D, A, &nniCount, &sprCount, options->fpO_stat_file);
 		
+			explainedVariance (D, T, numSpecies, options->precision, options->input_type, options->fpO_stat_file);
+				
 			if (verbose > 0)
 			{
 				Message ( (char*)"Performed %d NNI(s) and %d SPR(s) on dataset %d.",
 						nniCount, sprCount, setCounter);
 			}
-		}
+			
+		} //End if 'compute tree'
 
 
 /*********************************************************
@@ -1357,5 +1360,71 @@ tree *ImproveTree (Options *options, tree *T0, double **D, double **A,
 		freeTree (T2);
 	
 	return T0;
+}
+
+/*********************************************************/
+
+/* Pij : patristic distances computed from output tree
+ * Dij : distances from the input matrix
+ * Dm  : mean distances from input matrix
+ *              ___
+ *             \      _             _  2
+ *              \    /   P   _  D    \
+ *              /    \_   ij     ij _/
+ *             /___   
+ * V =  1 -  ------------------------------
+ *              ___
+ *             \      _             _  2
+ *              \    /   D   _  D    \
+ *              /    \_   ij     m  _/
+ *             /___   
+ * 
+ * D : the input distances matrix
+ * T : the tree from which the patristic distances are computed
+ * n : number of sequences*/
+void explainedVariance (double **D, tree *T, int n, int precision,
+	int input_type, FILE *fpO)
+{
+	int i, j;
+	double var, num, dem, Dm, **P;
+	char format[7];
+
+	snprintf (format, 7, "%%.%df\n", precision);
+	
+	// Mean of input distances
+	Dm = meanDist (D, n);
+	
+	// Patristic distances matrix
+	P = patristicMatrix (T, n, FALSE);
+	
+	// Compute explained variance
+	num = dem = 0.0;
+	for (i=0; i<n; i++)
+	{
+		for (j=0; j<n; j++)
+		{
+			num += (P[i][j] - D[i][j]) * (P[i][j] - D[i][j]);
+			dem += (D[i][j] - Dm) * (D[i][j] - Dm);
+		}
+	}
+	var = 1.0 - ( num / dem );
+	
+	freeMatrix (P, n);
+	
+	fprintf (fpO, "\tExplained variance : "); 
+	fprintf (fpO, format, var);
+	
+	if (input_type == PROTEIN)
+	{
+		if (var < EXPL_VAR_AA)
+			Warning ( (char*)"\n\tExplained variance = %.3f (<%.2f).\n\tCheck your input data.", var, EXPL_VAR_AA);
+	}
+	else
+	{
+		if (var < EXPL_VAR_NT)
+			Warning ( (char*)"\n\tExplained variance = %.3f (<%.2f).\n\tCheck your input data.", var, EXPL_VAR_NT);
+	}
+	
+	return;
 }
 

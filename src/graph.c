@@ -456,3 +456,23 @@ boolean checkLabelExist (set *S, char *label)
 	return ret;
 }
 
+/*********************************************************/
+
+int findLabelIndex (set *S, char *label)
+{
+	int r = -1;
+	set *X;
+	
+	for (X=S; NULL!=X; X=X->secondNode)
+	{
+		r++;
+		if (NULL != X->firstNode->label && 0 == strncmp (label, X->firstNode->label, MAX_NAME_LENGTH))
+		{
+			break;
+		}
+	}
+	
+	return r;
+}
+
+

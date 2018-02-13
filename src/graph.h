@@ -85,6 +85,7 @@ edge *findEdge (tree *T, edge *e);
 node *indexedNode (tree *T, int i);
 edge *indexedEdge (tree *T, int i);
 boolean checkLabelExist (set *S, char *label);
+int findLabelIndex (set *S, char *label);
 
 #endif /*GRAPH_H_*/
 
