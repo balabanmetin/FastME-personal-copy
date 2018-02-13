@@ -288,10 +288,10 @@ extern int verbose;
 
 // Explained variance thresholds
 #ifndef EXPL_VAR_NT
-#define EXPL_VAR_NT 0.98
+#define EXPL_VAR_NT 0.95
 #endif
 #ifndef EXPL_VAR_AA
-#define EXPL_VAR_AA 0.95
+#define EXPL_VAR_AA 0.9
 #endif
 
 
