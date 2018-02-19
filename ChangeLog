@@ -1,4 +1,7 @@
 
+2018-02-18	Version 2.1.6.1
+ * Bug fixed when doing bootstraps and removing gaps (-r) with proteins
+
 2018-01-17	Version 2.1.6
  * Added explained variance metric
 

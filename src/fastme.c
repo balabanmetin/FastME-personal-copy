@@ -255,7 +255,10 @@ int main (int argc, char **argv)
 			}
 			
 			// Generate random numbers for bootstraps before parallel section
-			rnd = rndForBootstraps (options, seqLength);
+			if (PROTEIN == options->input_type)
+				rnd = rndForBootstraps (options, PROTEINdataseq->init_len);
+			else
+				rnd = rndForBootstraps (options, seqLength);
 
 #ifdef _OPENMP
 			// Create a proteic model for each thread
