@@ -1773,3 +1773,100 @@ double meanDist (double **X, int n)
 	
 	return m;
 }
+
+/*********************************************************/
+
+//
+//           c
+//          / \
+//         /   \
+//        /     \
+//       /       \
+//      /         \
+//     /           \
+//    /_____________\
+//   a              b
+//
+// Triangular inequality: D(a,b) <= D(a,c) + D(b,c)
+//
+// Check all distances from the input distances matrix X conforms to the triangular inequality
+void checkTrgInequality (double **X, int n, boolean correctMatrix)
+{
+	int i1, j1, i2, j2, i3, j3;
+	double d1, d2, d3, val, maxVal;
+	
+	boolean sortir = false;
+	
+	maxVal = 0.0;
+	
+	for (i1=0; i1<n-1; i1++)
+	{
+		for (j1=i1+1; j1<n; j1++)
+		{
+			d1 = X[i1][j1];
+			for (i2=0; i2<n-1; i2++)
+			{
+				for (j2=i2+1; j2<n; j2++)
+				{
+					if (i1 != i2 || j1 != j2)
+					{
+						d2= X[i2][j2];
+						for (i3=0; i3<n-1; i3++)
+						{
+							for (j3=i3+1; j3<n; j3++)
+							{
+								if ( (i1 != i3 || j1 != j3) && (i2 != i3 || j2 != j3) )
+								{
+									d3 = X[i3][j3];
+									val = d2 + d3 - d1;
+//									Debug ("D[%d][%d] %f + D[%d][%d] %f - D[%d][%d] %f = val %f", i1, j1, d1, i2, j2, d2, i3, j3, d3, val);
+									if (val < maxVal)
+									{
+										maxVal = val;
+										if (! correctMatrix)
+										{
+											sortir = true;
+											break;
+										}
+									}
+								}
+							}
+							if (sortir)
+								break;
+						}
+					}
+					if (sortir)
+						break;
+				}
+				if (sortir)
+					break;
+			}
+			if (sortir)
+				break;
+		}
+		if (sortir)
+			break;
+	}
+		
+	if (maxVal < 0.0)
+	{
+		Warning ("Triangular inequality violation.");
+		if (correctMatrix)
+		{
+			Message ("Correcting distances accordingly...");
+			for (i1=0; i1<n; i1++)
+				for (j1=0; j1<n; j1++)
+				{
+					if (i1 != j1)
+						X[i1][j1] -= maxVal;
+				}
+		}
+		else
+		{
+			Message ("You may ask for triangular inequality correction using the '-q' option.");
+		}
+	}
+	
+	return;
+}
+

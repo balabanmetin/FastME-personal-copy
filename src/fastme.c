@@ -187,6 +187,8 @@ int main (int argc, char **argv)
 			else D = NULL;
 		}
 
+		checkTrgInequality (D, numSpecies, options->trg_ineq);
+
 		species_bk = copySet (species);
 		
 		if (options->use_O_mat_file)

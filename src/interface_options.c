@@ -254,6 +254,7 @@ void Usage ()
 		FLAT"  ["BOLD"-b "LINE"replicates"FLAT"]"
 		FLAT"  ["BOLD"-z "LINE"seed"FLAT"]"
 		FLAT"\n\t["BOLD"-c"FLAT"]"
+		FLAT"  ["BOLD"-q"FLAT"]"
 		FLAT"\n\t["BOLD"-f"FLAT"]"
 #ifdef _OPENMP
 		FLAT"  ["BOLD"-T "LINE"number of threads"FLAT"]"
@@ -362,6 +363,9 @@ void Usage ()
 		FLAT"\n\t\tUse this option if you want %s only to compute distance matrix."
 		FLAT"\n\t\tOnly helpful when the input data file contains sequences alignment(s).\n", PACKAGE_NAME);
 
+	printf (BOLD"\n\t-q"
+		FLAT"\n\t\tUse this option to let %s corrects the distances in case of triangular inequality violation.\n", PACKAGE_NAME);
+
 	printf (BOLD"\n\t-f "LINE"number of digits"
 		FLAT"\n\t\tUse this option to set the number of digits after the dot to use on output."
 		FLAT"\n\t\tDefault "LINE"number of digits"FLAT" is 8.\n");
@@ -421,6 +425,7 @@ void Set_Defaults_Input (Options *input)
 	input->use_gamma		= FALSE;
 	input->gamma			= 1.0;
 	input->only_mat			= FALSE;
+	input->trg_ineq			= FALSE;
 	input->precision		= 8;
 	input->use_NNI			= FALSE;
 	input->NNI				= BALNNI;
@@ -472,6 +477,7 @@ void Get_Input_CommandLine (Options *input, int argc, char **argv)
 		{"version",        no_argument,       0, 'V'},
 		{"help",           no_argument,       0, 'h'},
 		{"compute_mat",    no_argument,       0, 'c'},	// only compute the distance matrix
+		{"trg_ineq",       no_argument,       0, 'q'},	// check triangular inequality from the distances and correct if inequality is violated
 		{"precision",      no_argument,       0, 'f'},	// output number of digits after dot precision
 		{"dna",            optional_argument, 0, 'd'},	// evolutionary model for DNA sequence input (sets input data type to DNA)
 		{"protein",        optional_argument, 0, 'p'},	// evolutionary model for PROTEIN sequence input (sets input data type to PROTEIN)
@@ -488,9 +494,9 @@ void Get_Input_CommandLine (Options *input, int argc, char **argv)
 	while (1)
 	{
 #ifdef _OPENMP
-		c = getopt_long (argc, argv, "i:u:o:O:I:B:D:b:m:n::w:z:asv:Vhcf:d::p::g::reT:", long_options, &option_index);
+		c = getopt_long (argc, argv, "i:u:o:O:I:B:D:b:m:n::w:z:asv:Vhcqf:d::p::g::reT:", long_options, &option_index);
 #else
-		c = getopt_long (argc, argv, "i:u:o:O:I:B:D:b:m:n::w:z:asv:Vhcf:d::p::g::re", long_options, &option_index);
+		c = getopt_long (argc, argv, "i:u:o:O:I:B:D:b:m:n::w:z:asv:Vhcqf:d::p::g::re", long_options, &option_index);
 #endif
 
 		// Detect the end of the options.
@@ -674,6 +680,11 @@ void Get_Input_CommandLine (Options *input, int argc, char **argv)
 				}
 				else
 					input->model = LG;
+
+				break;
+
+			case 'q':
+				input->trg_ineq = TRUE;
 
 				break;
 

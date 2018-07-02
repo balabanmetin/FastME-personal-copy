@@ -162,5 +162,7 @@ void symmetrizeDoubleMatrix (double **X, int n);
 
 double meanDist (double **X, int n);
 
+void checkTrgInequality (double **X, int n, boolean correctMatrix);
+
 #endif /*DISTANCE_H_*/
 
