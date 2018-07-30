@@ -229,7 +229,7 @@ double **loadM (FILE *ifile, int *size, set *S)
 						else
 						{
 							if (strlen (tok) > DECIMAL_DIG)
-								Exit ( (char*)"Distance precision must not exceed %s digits.", DECIMAL_DIG);
+								Exit ( (char*)"Distance precision must not exceed %d digits.", DECIMAL_DIG);
 							
 							if (! isNumeric (tok))
 								Exit ( (char*)"Invalid distance matrix : numerical value expected for taxon '%s' instead of '%s'.",
