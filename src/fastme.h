@@ -50,6 +50,8 @@ void OpenFiles (Options *options);
 
 void printOptions (Options *options);
 
+void printMatrixSeq (double **D, int numSeqs, int numQry, seq **sequences, FILE *ofile, int input_type, int precision);
+
 void printMatrix (double **D, int size, set *nodes, FILE *ofile, int input_type, int precision);
 
 void printMatrixStr (double **D, int size, set *nodes, char *str, int input_type, int precision);
@@ -67,7 +69,7 @@ void InitSpeciesAndTrees (Options *options, set *species, char **bootTrees,
 
 char **GetDataFromDNA (int numSpecies, seq **sequences);
 
-double **GetMatFromDNA (Options *options, int numSpecies, int seqLength,
+double **GetMatFromDNA (Options *options, int numSpecies, int numQry, int seqLength,
 	char **DNAdata, int *filter);
 	
 allseq *GetDataFromProt (Options *options, int numSpecies, seq **sequences,

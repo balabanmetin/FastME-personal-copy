@@ -173,14 +173,20 @@ double *calcStationaryProbsGlobal (char **s, int numSeqs, int length,
 {
 	int i;
 	double *p;
+    double sum=0;
 
 	p = (double *) mCalloc (alphabetSize, sizeof (double));
 	for (i=0; i<alphabetSize; i++)
 	{
 		p[i] = (double) (matrixCharMatches (s, numSeqs, length,
 			alphabet[i], filter)) / (numSeqs * numSelected);
+		sum += p[i];
 	}
 
+    for (i=0; i<alphabetSize; i++)
+    {
+        p[i]/= sum;
+    }
 	return (p);
 }
 
@@ -553,6 +559,7 @@ double logdet (double **P, double *Pi1, double *Pi2)
 	int i;
 	double returnValue, detP;
 
+
 	detP = det (P, DNA_ALPHABET_SIZE);
 
 	if (0 >= detP)
@@ -560,7 +567,7 @@ double logdet (double **P, double *Pi1, double *Pi2)
 		return (DNA_DIST_MAX);
 	}
 
-	returnValue = -0.5 * log (detP);
+	returnValue = -0.25 * log (detP);
 
 	for (i=0; i<DNA_ALPHABET_SIZE; i++)
 	{
@@ -568,7 +575,7 @@ double logdet (double **P, double *Pi1, double *Pi2)
 			Exit ( (char*)"Logdet value of Pi1[i] is %f, of Pi2[i] is %f, i is %d.",
 				Pi1[i], Pi2[i], i);
 
-		returnValue += (log(Pi1[i]) + log(Pi2[i])) / 8;
+		returnValue += (log(Pi1[i]) + log(Pi2[i])) / 16;
 	}
 
 	return (returnValue);
@@ -840,14 +847,14 @@ int gapCheckProportion (char **data, int numSeqs, int numSites, int itype,
 
 /*********************************************************/
 
-double **makeDistMatrix (char **data, int numSeqs, int numSites,
+double **makeDistMatrix (char **data, int numSeqs, int numQry, int numSites,
 	boolean use_gamma, float gamma, int model, int itype, int *filter,
 	boolean gapCheck, FILE *fpO, boolean outputMatrix)
 {
 	int numSelected;
 	double **D;
 
-	D = initDoubleMatrix (numSeqs);
+    D = initDoubleRectMatrix (numQry, numSeqs);
 
 	// Here we create 'filter' for global computation of equilibrium frequencies
 	// The frequencies are counted on the entire alignment
@@ -878,7 +885,7 @@ double **makeDistMatrix (char **data, int numSeqs, int numSites,
 			break;
 
 		case JC69:
-			computeJC69 (data, numSeqs, numSites, numSelected, use_gamma,
+			computeJC69 (data, numSeqs, numQry, numSites, numSelected, use_gamma,
 				gamma, itype, filter, D, gapCheck, outputMatrix);
 			break;
 
@@ -898,12 +905,12 @@ double **makeDistMatrix (char **data, int numSeqs, int numSites,
 			break;
 
 		case TN93:
-			computeTN93 (data, numSeqs, numSites, numSelected, use_gamma,
+			computeTN93 (data, numSeqs, numQry, numSites, numSelected, use_gamma,
 				gamma, itype, filter, D, gapCheck, outputMatrix);
 			break;
 			
 		case LOGDET:
-			computeLOGDET (data, numSeqs, numSites, numSelected, itype,
+			computeLOGDET (data, numSeqs, numQry, numSites, numSelected, itype,
 				filter, D, gapCheck, outputMatrix);
 			break;
 			
@@ -911,9 +918,9 @@ double **makeDistMatrix (char **data, int numSeqs, int numSites,
 			Exit ( (char*)"Please specify model for sequence data.");
 	}
 
-	if (warnCheckMaxDist (D, numSeqs) && !isBoostrap)
+	/*if (warnCheckMaxDist (D, numSeqs) && !isBoostrap)
 		Warning ( (char*)"Give up this dataset because at least one distance exceeds %.2f.", DNA_DIST_MAX);
-
+    */
 	return (D);
 }
 
@@ -1086,7 +1093,7 @@ void computeK2P (char **data, int numSeqs, int numSites, int numSelected,
 
 /*********************************************************/
 
-void computeJC69 (char **data, int numSeqs, int numSites, int numSelected,
+void computeJC69 (char **data, int numSeqs, int numQry, int numSites, int numSelected,
 	boolean use_gamma, float gamma, int itype, int *filter, double **D,
 	boolean gapCheck, boolean outputMatrix)
 {
@@ -1099,9 +1106,9 @@ void computeJC69 (char **data, int numSeqs, int numSites, int numSelected,
 	#pragma omp parallel for private (i, j, b, f, numS) if (!isBoostrap)
 #endif
 
-	for (i=0; i<numSeqs-1; i++)
+	for (i=0; i<numQry; i++)
 	{
-		for (j=i; j<numSeqs; j++)
+		for (j=0; j<numSeqs; j++)
 		{
 #ifdef _OPENMP
 			#pragma omp flush (abort)
@@ -1123,11 +1130,11 @@ void computeJC69 (char **data, int numSeqs, int numSites, int numSelected,
 					
 					b = HammingDistance (data[i], data[j], f, numSites, numS);
 				
-					D[j][i] = D[i][j] = calcJC69 (b, use_gamma, gamma);
+					D[i][j] = calcJC69 (b, use_gamma, gamma);
 
 					if (numS == 0) {
 						if (outputMatrix)
-							D[j][i] = D[i][j] = PROT_DIST_MAX +1;
+							D[i][j] = PROT_DIST_MAX +1;
 						else
 						{
 							abort = TRUE;
@@ -1475,7 +1482,7 @@ void computeF84 (char **data, int numSeqs, int numSites, int numSelected,
 
 /*********************************************************/
 
-void computeTN93 (char **data, int numSeqs, int numSites, int numSelected,
+void computeTN93 (char **data, int numSeqs, int numQry, int numSites, int numSelected,
 	boolean use_gamma, float gamma, int itype, int *filter, double **D,
 	boolean gapCheck, boolean outputMatrix)
 {
@@ -1503,9 +1510,9 @@ void computeTN93 (char **data, int numSeqs, int numSites, int numSelected,
 	#pragma omp for private (i, j, a1, a2, b, f, numS, PStateChanges)
 #endif
 
-	for (i=0; i<numSeqs-1; i++)
+	for (i=0; i<numQry; i++)
 	{
-		for (j=i; j<numSeqs; j++)
+		for (j=0; j<numSeqs; j++)
 		{
 #ifdef _OPENMP
 			#pragma omp flush (abort)
@@ -1534,12 +1541,12 @@ void computeTN93 (char **data, int numSeqs, int numSites, int numSelected,
 					a2 = PStateChanges[CYTOSINE][THYMINE] +
 						PStateChanges[THYMINE][CYTOSINE];	//pyrimidine transition rate
 					b = calcTransversionRate (PStateChanges);
-					D[i][j] = D[j][i] = calcTN93 (a1, a2, b, PR, PY, PAPG,
+					D[i][j] = calcTN93 (a1, a2, b, PR, PY, PAPG,
 						PCPT, use_gamma, gamma);
 
 					if (numS == 0) {
 						if (outputMatrix)
-							D[j][i] = D[i][j] = PROT_DIST_MAX +1;
+						    D[i][j] = PROT_DIST_MAX +1;
 						else
 						{
 							abort = TRUE;
@@ -1656,7 +1663,7 @@ void computeRY (char **data, int numSeqs, int numSites,
 
 /*********************************************************/
 
-void computeLOGDET (char **data, int numSeqs, int numSites,
+void computeLOGDET (char **data, int numSeqs, int numQry, int numSites,
 	int numSelected, int itype, int *filter, double **D,
 	boolean gapCheck, boolean outputMatrix)
 {
@@ -1684,9 +1691,9 @@ void computeLOGDET (char **data, int numSeqs, int numSites,
 	#pragma omp for private (i, j, f, numS, PStateChanges)
 #endif
 	
-	for (i=0; i<numSeqs-1; i++)
+	for (i=0; i<numQry; i++)
 	{
-		for (j=i; j<numSeqs; j++)
+		for (j=0; j<numSeqs; j++)
 		{
 #ifdef _OPENMP
 			#pragma omp flush (abort)
@@ -1710,11 +1717,11 @@ void computeLOGDET (char **data, int numSeqs, int numSites,
 					calcTransitionProbs (PStateChanges, data[i], data[j],
 						numSites, f, numS, DNA_ALPHABET_SIZE, DNA_ALPHABET);
 
-					D[i][j] = D[j][i] = logdet (PStateChanges, Pi2[i], Pi2[j]);
+					D[i][j] = logdet (PStateChanges, Pi2[i], Pi2[j]);
 
 					if (numS == 0) {
 						if (outputMatrix)
-							D[j][i] = D[i][j] = PROT_DIST_MAX +1;
+						    D[i][j] = PROT_DIST_MAX +1;
 						else
 						{
 							abort = TRUE;

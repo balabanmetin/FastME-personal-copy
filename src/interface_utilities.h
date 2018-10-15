@@ -53,6 +53,7 @@ typedef struct __Options {			/* mostly used in 'interface_options.c' */
 	boolean		use_gamma;			/* gamma distributed rates across sites */
 	float		gamma;				/* gamma rate variation parameter (alpha) */
 	boolean		only_mat;			/* only computes the distance matrix */
+	int			numQry;				/* number of queries in the distance matrix */
 	boolean		trg_ineq;			/* check triangular inequality from the distances and correct if inequality is violated */
 	int			precision;			/* number of digits after dot to use on output */
 	long		seed;				/* seed for randomization (if doing bootstrapping) */

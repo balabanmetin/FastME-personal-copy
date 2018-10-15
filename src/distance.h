@@ -113,7 +113,7 @@ void gapCheckFilter (int *filter, int itype, int seqlength, int numSeqs,
 int gapCheckProportion (char **data, int numSeqs, int numSites, int itype,
 	int *filter, FILE *fpO, boolean gapCheck);
 
-double **makeDistMatrix (char **data, int numSeqs, int numSites,
+double **makeDistMatrix (char **data, int numSeqs, int numQry, int numSites,
 	boolean use_gamma, float gamma, int model, int itype, int *filter,
 	boolean gapCheck, FILE *fpO, boolean outputMatrix);
 
@@ -131,7 +131,7 @@ void computeK2P (char **data, int numSeqs, int numSites, int numSelected,
 	boolean use_gamma, float gamma, int itype, int *filter, double **D,
 	boolean gapCheck, boolean outputMatrix);
 
-void computeJC69 (char **data, int numSeqs, int numSites, int numSelected,
+void computeJC69 (char **data, int numSeqs, int numQry, int numSites, int numSelected,
 	boolean use_gamma, float gamma, int itype, int *filter, double **D,
 	boolean gapCheck, boolean outputMatrix);
 
@@ -150,11 +150,11 @@ void computeF84 (char **data, int numSeqs, int numSites, int numSelected,
 	boolean use_gamma, float gamma, int itype, int *filter, double **D,
 	boolean gapCheck, boolean outputMatrix);
 
-void computeTN93 (char **data, int numSeqs, int numSites, int numSelected,
+void computeTN93 (char **data, int numSeqs, int numQry, int numSites, int numSelected,
 	boolean use_gamma, float gamma, int itype, int *filter, double **D,
 	boolean gapCheck, boolean outputMatrix);
 
-void computeLOGDET (char **data, int numSeqs, int numSites,
+void computeLOGDET (char **data, int numSeqs, int numQry, int numSites,
 	int numSelected, int itype, int *filter, double **D,
 	boolean gapCheck, boolean outputMatrix);
 

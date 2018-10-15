@@ -462,7 +462,6 @@ seq **Read_Seq_Interleaved (FILE *in, int *n_otu, set *taxa)
 			break;
 		}
 	}
-
 	if (data[0]->len == len)
 		end = 1;
 
@@ -509,8 +508,10 @@ seq **Read_Seq_Interleaved (FILE *in, int *n_otu, set *taxa)
 
 	for (i=0; i<*n_otu; i++)
 	{
-		if (data[i]->len != len)
-			Exit ( (char*)"Check sequence '%s' length.", data[i]->name);
+		if (data[i]->len != len) {
+			Exit((char *) "Check sequence '%s' length.", data[i]->name);
+
+		}
 	}
 
 	free (format);

@@ -298,6 +298,7 @@ extern int verbose;
 void constantToStr (int c, char *str);
 int *initZeroArray (int l);
 int *initOneArray (int l);
+double **initDoubleRectMatrix (int d, int z);
 double **initDoubleMatrix (int d);
 void fillZeroMatrix (double ***A, int d);
 boolean whiteSpace (char c);

@@ -181,6 +181,26 @@ int *initOneArray (int l)
 
 /*********************************************************/
 
+double **initDoubleRectMatrix (int d, int z)
+{
+    int i,j;
+    double **A;
+
+    A = (double **) mCalloc (d, sizeof (double *));
+
+    for (i=0; i<d; i++)
+    {
+        A[i] = (double *) mCalloc (z, sizeof (double));
+        for (j=0; j<z; j++)
+            A[i][j] = 0.0;
+    }
+
+    return (A);
+}
+
+
+/*********************************************************/
+
 double **initDoubleMatrix (int d)
 {
 	int i,j;

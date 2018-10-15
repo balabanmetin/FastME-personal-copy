@@ -43,7 +43,7 @@ int main (int argc, char **argv)
 	int i = 0;
 #endif
 
-	int numSpecies;
+	int numSpecies, numQry;
 	int setCounter = 0;
 	
 	int nniCount, sprCount, repCounter, repToPrint, printedRep;
@@ -167,7 +167,6 @@ int main (int argc, char **argv)
 				PROTEINdataseq = GetDataFromProt (options, numSpecies, sequences, PROTEINdatamodel);
 			}
 
-			Free_Seq (sequences, numSpecies);
 			PrintEstimatedMemorySpace (numSpecies, seqLength, options);
 
 /*********************************************************
@@ -175,9 +174,14 @@ int main (int argc, char **argv)
 **********************************************************/
 			Message ( (char*)"Computing pairwise distances...");
 			// DNA sequences
+			if(options->numQry == -1)
+			    numQry = numSpecies;
+			else
+			    numQry = options->numQry;
+
 			if (DNA == options->input_type || PDIST == options->model || F81LIKE == options->model)
 			{
-				D = GetMatFromDNA (options, numSpecies, seqLength, DNAdata, NULL);
+				D = GetMatFromDNA (options, numSpecies, numQry, seqLength, DNAdata, NULL);
 			}
 			// PROTEIN sequences
 			else if (PROTEIN == options->input_type)
@@ -187,13 +191,18 @@ int main (int argc, char **argv)
 			else D = NULL;
 		}
 
-		checkTrgInequality (D, numSpecies, options->trg_ineq);
+		//checkTrgInequality (D, numSpecies, options->trg_ineq);
 
 		species_bk = copySet (species);
-		
-		if (options->use_O_mat_file)
-			printMatrix (D, numSpecies, species, options->fpO_mat_file, options->input_type, options->precision);
 
+		if (options->use_O_mat_file)
+			printMatrixSeq (D, numSpecies, numQry, sequences, options->fpO_mat_file, options->input_type, options->precision);
+
+
+		if (MATRIX != options->input_type)
+		{
+			Free_Seq (sequences, numSpecies);
+		}
 /*********************************************************
 		COMPUTE TREE
 **********************************************************/
@@ -290,7 +299,7 @@ int main (int argc, char **argv)
 				{
 					if (DNA == options->input_type || PDIST == options->model || F81LIKE == options->model)
 					{
-						D = GetMatFromDNA (options, numSpecies, seqLength, DNAdata, rnd[repCounter-1]);
+						D = GetMatFromDNA (options, numSpecies, numSpecies, seqLength, DNAdata, rnd[repCounter-1]);
 					}
 					else if (PROTEIN == options->input_type)
 					{
@@ -389,8 +398,7 @@ int main (int argc, char **argv)
 		
 		if (NULL != matStr)
 			free (matStr);
-		
-		freeMatrix (D, numSpecies);
+		freeMatrix (D, numQry);
 		freeSet (species);
 		freeSet (species_bk);
 		if (NULL != DNAdata)
@@ -782,6 +790,53 @@ void printOptions (Options *options)
 
 	return;
 }
+/*********************************************************/
+
+void printMatrixSeq (double **D, int numSeqs, int numQry, seq **sequences, FILE *ofile, int input_type, int precision)
+{
+	char *tmp;
+	char format[8];
+	int i;
+	int j,k;
+	double threshold, d;
+
+	tmp = (char *) mCalloc (DECIMAL_DIG, sizeof(char));
+	snprintf (format, 8, "%%.%df\t", precision);
+
+	if (PROTEIN == input_type)
+		threshold = PROT_DIST_MAX;
+	else
+		threshold = DNA_DIST_MAX;
+
+	for(j=0; j<numSeqs; j++){
+		fprintf (ofile, "\t%-10s", sequences[j]->name);
+	}
+	fprintf (ofile, "\n");
+	for (j=0; j<numQry; j++)
+	{
+		fprintf (ofile, "%-10s\t", sequences[j]->name);
+		for (k=0; k<numSeqs; k++)
+		{
+			d = D[j][k];
+			if (d > threshold)
+			{
+				// Build string of length depending on 'precision' to write
+				strncat (tmp, "NA", 2);
+				// Add [precision - 2] blank spaces
+				for (i=0; i<precision-2; i++)
+					strncat (tmp, " ", 1);
+				// The following code generates warning because 'tmp' is not a string literal
+				fprintf (ofile, tmp);
+			}
+			else
+				fprintf (ofile, format, d);
+		}
+		fprintf (ofile, "\n");
+	}
+	free (tmp);
+
+	return;
+}
 
 /*********************************************************/
 
@@ -1095,7 +1150,7 @@ char **GetDataFromDNA (int numSpecies, seq **sequences)
 
 /*********************************************************/
 
-double **GetMatFromDNA (Options *options, int numSpecies, int seqLength,
+double **GetMatFromDNA (Options *options, int numSpecies, int numQry, int seqLength,
 	char **DNAdata, int *filter)
 {
 	boolean filterIsNULL;
@@ -1117,7 +1172,7 @@ double **GetMatFromDNA (Options *options, int numSpecies, int seqLength,
 	{
 		filterIsNULL = FALSE;
 	}
-	double **D = makeDistMatrix (DNAdata, numSpecies, seqLength, options->use_gamma,
+	double **D = makeDistMatrix (DNAdata, numSpecies, numQry, seqLength, options->use_gamma,
 						options->gamma, options->model, options->input_type, filter,
 						options->no_gap, options->fpO_stat_file, options->use_O_mat_file);
 	

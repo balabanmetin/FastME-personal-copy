@@ -425,6 +425,7 @@ void Set_Defaults_Input (Options *input)
 	input->use_gamma		= FALSE;
 	input->gamma			= 1.0;
 	input->only_mat			= FALSE;
+	input->numQry			= -1;
 	input->trg_ineq			= FALSE;
 	input->precision		= 8;
 	input->use_NNI			= FALSE;
@@ -477,6 +478,7 @@ void Get_Input_CommandLine (Options *input, int argc, char **argv)
 		{"version",        no_argument,       0, 'V'},
 		{"help",           no_argument,       0, 'h'},
 		{"compute_mat",    no_argument,       0, 'c'},	// only compute the distance matrix
+		{"numQry",    	   required_argument, 0, 'Q'},	// number of queries (distance matrix)
 		{"trg_ineq",       no_argument,       0, 'q'},	// check triangular inequality from the distances and correct if inequality is violated
 		{"precision",      no_argument,       0, 'f'},	// output number of digits after dot precision
 		{"dna",            optional_argument, 0, 'd'},	// evolutionary model for DNA sequence input (sets input data type to DNA)
@@ -496,7 +498,7 @@ void Get_Input_CommandLine (Options *input, int argc, char **argv)
 #ifdef _OPENMP
 		c = getopt_long (argc, argv, "i:u:o:O:I:B:D:b:m:n::w:z:asv:Vhcqf:d::p::g::reT:", long_options, &option_index);
 #else
-		c = getopt_long (argc, argv, "i:u:o:O:I:B:D:b:m:n::w:z:asv:Vhcqf:d::p::g::re", long_options, &option_index);
+		c = getopt_long (argc, argv, "i:u:o:O:I:B:D:b:m:n::w:z:asv:VhcQ:qf:d::p::g::re", long_options, &option_index);
 #endif
 
 		// Detect the end of the options.
@@ -760,6 +762,11 @@ void Get_Input_CommandLine (Options *input, int argc, char **argv)
 
 				break;
 
+			case 'Q':
+				// seed for randomization
+				input->numQry = atoi (optarg);
+
+				break;
 			case '?':
 				// getopt_long already printed an error message.
 
