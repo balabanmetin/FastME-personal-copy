@@ -496,7 +496,7 @@ void Get_Input_CommandLine (Options *input, int argc, char **argv)
 	while (1)
 	{
 #ifdef _OPENMP
-		c = getopt_long (argc, argv, "i:u:o:O:I:B:D:b:m:n::w:z:asv:Vhcqf:d::p::g::reT:", long_options, &option_index);
+		c = getopt_long (argc, argv, "i:u:o:O:I:B:D:b:m:n::w:z:asv:VhcQ:qf:d::p::g::reT:", long_options, &option_index);
 #else
 		c = getopt_long (argc, argv, "i:u:o:O:I:B:D:b:m:n::w:z:asv:VhcQ:qf:d::p::g::re", long_options, &option_index);
 #endif
