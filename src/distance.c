@@ -1512,7 +1512,7 @@ void computeTN93 (char **data, int numSeqs, int numQry, int numSites, int numSel
 
 	for (i=0; i<numQry; i++)
 	{
-		for (j=0; j<numSeqs; j++)
+		for (j=i; j<numSeqs; j++)
 		{
 #ifdef _OPENMP
 			#pragma omp flush (abort)
@@ -1543,10 +1543,15 @@ void computeTN93 (char **data, int numSeqs, int numQry, int numSites, int numSel
 					b = calcTransversionRate (PStateChanges);
 					D[i][j] = calcTN93 (a1, a2, b, PR, PY, PAPG,
 						PCPT, use_gamma, gamma);
+					if(j < numQry)
+						D[j][i] = D[i][j];
 
 					if (numS == 0) {
-						if (outputMatrix)
-						    D[i][j] = PROT_DIST_MAX +1;
+						if (outputMatrix) {
+							D[i][j] = PROT_DIST_MAX + 1;
+							if(j < numQry)
+								D[j][i] = D[i][j];
+						}
 						else
 						{
 							abort = TRUE;
