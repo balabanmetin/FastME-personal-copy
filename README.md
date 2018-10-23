@@ -4,10 +4,11 @@ The original software can be found via the following link:
 
 http://www.atgc-montpellier.fr/fastme/
 
-installation:
+Installation:
 
+```
 automake --add-missing
 ./configure
 make
 make install
-
+```
