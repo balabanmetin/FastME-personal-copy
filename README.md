@@ -7,7 +7,7 @@ http://www.atgc-montpellier.fr/fastme/
 Installation:
 
 ```
-automake --add-missing
+autoreconf && automake --add-missing --copy --force-missing
 ./configure
 make
 make install
